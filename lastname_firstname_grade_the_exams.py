@@ -6,40 +6,42 @@ def open_file(file_name):
         with open(file_name, 'r') as file:
             print("Đang xử lý...")
             # Thực hiện xử lý tệp tin ở đây
+            file_content = file.read()  # Đọc nội dung tệp vào biến file_content
+            return file_content  # Trả về nội dung tệp đã đọc được
     except FileNotFoundError:
         print("Không tìm thấy tệp:", file_name)
+        return None  # Trả về None nếu không tìm thấy tệp
 
-def kiemtrahople(file_name):
+def kiemtrahople(file_content):
     valid_lines = []
     invalid_count = 0  # Số dòng dữ liệu không hợp lệ
 
-    with open(file_name, 'r') as file:
-        lines = file.readlines()
+    lines = file_content.split('\n')  # Chia nội dung tệp thành các dòng
 
-        # Báo cáo tổng số dòng dữ liệu được lưu trữ trong tệp
-        total_lines = len(lines)
-        print("Tổng số dòng dữ liệu được lưu trữ trong tệp:", total_lines)
+    # Báo cáo tổng số dòng dữ liệu được lưu trữ trong tệp
+    total_lines = len(lines)
+    print("Tổng số dòng dữ liệu được lưu trữ trong tệp:", total_lines)
 
-        # Kiểm tra từng dòng dữ liệu
-        for line in lines:
-            line = line.strip()
-            data = line.split(',')
+    # Kiểm tra từng dòng dữ liệu
+    for line in lines:
+        line = line.strip()
+        data = line.split(',')
 
-            # Kiểm tra độ dài dữ liệu
-            if len(data) != 26:
-                print("Bài nộp không hợp lệ, không đủ 26 kí tự:", line)
-                invalid_count += 1
-                continue
+        # Kiểm tra độ dài dữ liệu
+        if len(data) != 26:
+            print("Bài nộp không hợp lệ, không đủ 26 kí tự:", line)
+            invalid_count += 1
+            continue
 
-            # Kiểm tra ID của sinh viên
-            student_id = data[0]
-            if not (student_id.startswith('N') and student_id[1:].isdigit() and len(student_id) == 9):
-                print("Bài nộp không hợp lệ, ID không đúng:", line)
-                invalid_count += 1
-                continue
+        # Kiểm tra ID của sinh viên
+        student_id = data[0]
+        if not (student_id.startswith('N') and student_id[1:].isdigit() and len(student_id) == 9):
+            print("Bài nộp không hợp lệ, ID không đúng:", line)
+            invalid_count += 1
+            continue
 
-            # Dòng dữ liệu hợp lệ, thêm vào danh sách valid_lines
-            valid_lines.append(line)
+        # Dòng dữ liệu hợp lệ, thêm vào danh sách valid_lines
+        valid_lines.append(line)
 
     # Báo cáo tổng số dòng dữ liệu hợp lệ trong tệp
     valid_count = len(valid_lines)
@@ -51,11 +53,7 @@ def kiemtrahople(file_name):
     return valid_lines
 
 
-def chamdiem(valid_lines, file_name, key="B,A,D,D,C,B,D,A,C,C,D,B,A,B,A,C,B,D,A,C,A,A,B,D,D"):
-    # Đọc dữ liệu từ tệp
-    with open(file_name, 'r') as file:
-        data = file.readlines()
-
+def chamdiem(valid_lines, file_content, key="B,A,D,D,C,B,D,A,C,C,D,B,A,B,A,C,B,D,A,C,A,A,B,D,D"):
     answers = [line.strip().split(',') for line in valid_lines]
 
     scores = []
@@ -161,11 +159,12 @@ def ketqua(file_name, valid_lines, scores):
 def main():
     file_name = input("Nhập class: ") + '.txt'
 
-    open_file(file_name)
-    valid_lines = kiemtrahople(file_name)
-    scores = chamdiem(valid_lines, file_name)
-    if scores:
-        ketqua(file_name, valid_lines, scores)
+    file_content = open_file(file_name)  # Đọc nội dung tệp và lưu vào biến file_content
+    if file_content:
+        valid_lines = kiemtrahople(file_content)  
+        scores = chamdiem(valid_lines, file_content)  
+        if scores:
+            ketqua(file_name, valid_lines, scores)
 
 main()
 
